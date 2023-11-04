@@ -1,10 +1,10 @@
 package main
 
 type Config struct {
-	Host string      `yaml:"host"`
-	Port int         `yaml:"port"`
-	Rc   redisConfig `yaml:"redis_config"`
-	Db   dbConfig    `yaml:"db_config"`
+	Host     string      `yaml:"host"`
+	Port     int         `yaml:"port"`
+	Redis    redisConfig `yaml:"redis_config"`
+	Database dbConfig    `yaml:"db_config"`
 }
 type redisConfig struct {
 	Host     string `yaml:"host"`

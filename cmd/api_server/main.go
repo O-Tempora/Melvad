@@ -28,12 +28,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	defer file.Close()
 	dec := yaml.NewDecoder(file)
 	if err = dec.Decode(cf); err != nil {
 		log.Fatal(err.Error())
 	}
 
 	flag.Parse()
-	cf.Rc.Host = redis_host
-	cf.Rc.Port = redis_port
+	cf.Redis.Host = redis_host
+	cf.Redis.Port = redis_port
+
+	if err = StartServer(cf); err != nil {
+		log.Fatal(err.Error())
+	}
 }

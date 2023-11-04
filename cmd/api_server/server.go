@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/O-Tempora/Melvad/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -19,6 +20,7 @@ type server struct {
 	router   *chi.Mux
 	pgcon    *pgx.Conn
 	rediscon *redis.Client
+	service  *service.Service
 }
 
 func WithLogger(s *server) *server {
@@ -56,6 +58,10 @@ func WithRedisConn(s *server, cf *Config) *server {
 func StartServer(config *Config) error {
 	s := &server{}
 	s = WithDbConn(WithLogger(s), config)
+	s.service = &service.Service{
+		Pgconn:   s.pgcon,
+		Rediscon: s.rediscon,
+	}
 	s.Router()
 	return http.ListenAndServe(fmt.Sprintf(":%d", config.Port), s)
 }

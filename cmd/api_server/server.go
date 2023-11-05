@@ -57,7 +57,9 @@ func WithRedisConn(s *server, cf *Config) *server {
 
 func StartServer(config *Config) error {
 	s := &server{}
-	s = WithDbConn(WithLogger(s), config)
+	// s = WithDbConn(WithRedisConn(WithLogger(s), config), config)
+	//s = WithRedisConn(WithLogger(s), config)
+	s = WithLogger(s)
 	s.service = &service.Service{
 		Pgconn:   s.pgcon,
 		Rediscon: s.rediscon,

@@ -29,11 +29,17 @@ func (s *Service) InsertUser(user *models.PgRequest) (int, error) {
 		`insert into users 
 		(name, age) 
 		values ($1, $2)
-		returning id`,
+		returning id
+		on conflict do nothing`,
 		user.Name, user.Age,
 	)
 	if err = res.Scan(&id); err != nil {
 		return -1, err
 	}
 	return id, nil
+}
+
+func (s *Service) RedisIncrease(m *models.RedisIncrRequest) (int64, error) {
+	res := s.Rediscon.IncrBy(context.Background(), m.Key, m.Value)
+	return res.Val(), res.Err()
 }

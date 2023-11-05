@@ -13,9 +13,9 @@ build:
 
 ## run: runs the application. Specify host (redis host) and port (redis port) args
 run: build 
-	sudo docker run --name melvad-redis -p 5554:6379 -d redis
-	sudo docker run --name melvad-postgres -p 127.0.0.1:5553:5432/tcp -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=melvad -d postgres
-	timeout 15s bash -c 'until sudo docker exec melvad-postgres pg_isready ; do sleep 2 ; done'
+#	sudo docker run --name melvad-redis -p 5554:6379 -d redis
+#	sudo docker run --name melvad-postgres -p 127.0.0.1:5553:5432/tcp -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=melvad -d postgres
+#	timeout 15s bash -c 'until sudo docker exec melvad-postgres pg_isready ; do sleep 2 ; done'
 	./$(BINARY_NAME)
 	@if [ -z $(port) ] && [ -z $(host) ]; then \
 		./$(BINARY_NAME); \

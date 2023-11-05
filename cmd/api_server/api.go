@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/O-Tempora/Melvad/internal/models"
+	"github.com/go-chi/chi/v5"
 	"golang.org/x/exp/slog"
 )
 
@@ -39,7 +40,8 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 }
 
 func (s *server) Router() {
-	s.router.Post("/sign/hmacsha512", s.handleRedisHmac)
+	s.router = chi.NewMux()
+	s.router.Post("/sign/hmacsha512", s.handleSignHmac)
 	s.router.Post("/redis/incr", s.handleRedisIncr)
 	s.router.Post("/postgres/users", s.handlePgInsert)
 }
@@ -58,9 +60,19 @@ func (s *server) handlePgInsert(w http.ResponseWriter, r *http.Request) {
 	}
 	s.respond(w, r, 200, id, nil)
 }
-func (s *server) handleRedisHmac(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleSignHmac(w http.ResponseWriter, r *http.Request) {
 
 }
 func (s *server) handleRedisIncr(w http.ResponseWriter, r *http.Request) {
-
+	model := &models.RedisIncrRequest{}
+	if err := json.NewDecoder(r.Body).Decode(model); err != nil {
+		s.respond(w, r, 400, nil, err)
+		return
+	}
+	i, err := s.service.RedisIncrease(model)
+	if err != nil {
+		s.respond(w, r, 500, nil, err)
+		return
+	}
+	s.respond(w, r, 200, i, nil)
 }

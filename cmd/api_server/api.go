@@ -58,11 +58,14 @@ func (s *server) handlePgInsert(w http.ResponseWriter, r *http.Request) {
 		s.respond(w, r, 500, nil, err)
 		return
 	}
-	s.respond(w, r, 200, map[string]int{
-		"id": id,
+	s.respond(w, r, 200, struct {
+		Id int `json:"id"`
+	}{
+		Id: id,
 	}, nil)
 }
 func (s *server) handleSignHmac(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	model := &models.Hmac512Request{}
 	if err := json.NewDecoder(r.Body).Decode(model); err != nil {
 		s.respond(w, r, 400, nil, err)
@@ -76,6 +79,7 @@ func (s *server) handleSignHmac(w http.ResponseWriter, r *http.Request) {
 	s.respond(w, r, 200, hx, nil)
 }
 func (s *server) handleRedisIncr(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	model := &models.RedisIncrRequest{}
 	if err := json.NewDecoder(r.Body).Decode(model); err != nil {
 		s.respond(w, r, 400, nil, err)
@@ -86,7 +90,9 @@ func (s *server) handleRedisIncr(w http.ResponseWriter, r *http.Request) {
 		s.respond(w, r, 500, nil, err)
 		return
 	}
-	s.respond(w, r, 200, map[string]int64{
-		"value": i,
+	s.respond(w, r, 200, struct {
+		Value int64 `json:"value"`
+	}{
+		Value: i,
 	}, nil)
 }

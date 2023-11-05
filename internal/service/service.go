@@ -29,11 +29,11 @@ func (s *Service) InsertUser(user *models.PgRequest) (int, error) {
 	}
 
 	res := s.Pgconn.QueryRow(context.Background(),
-		`insert into users 
+		`insert into users
 		(name, age) 
 		values ($1, $2)
-		returning id
-		on conflict do nothing`,
+		on conflict do nothing
+		returning id`,
 		user.Name, user.Age,
 	)
 	if err = res.Scan(&id); err != nil {

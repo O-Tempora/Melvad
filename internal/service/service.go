@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha512"
+	"encoding/hex"
 
 	"github.com/O-Tempora/Melvad/internal/models"
 	"github.com/jackc/pgx/v5"
@@ -42,4 +45,13 @@ func (s *Service) InsertUser(user *models.PgRequest) (int, error) {
 func (s *Service) RedisIncrease(m *models.RedisIncrRequest) (int64, error) {
 	res := s.Rediscon.IncrBy(context.Background(), m.Key, m.Value)
 	return res.Val(), res.Err()
+}
+
+func (s *Service) SignHmac512(m *models.Hmac512Request) (string, error) {
+	hash := hmac.New(sha512.New, []byte(m.Key))
+	_, err := hash.Write([]byte(m.Text))
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }

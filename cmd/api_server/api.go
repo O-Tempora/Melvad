@@ -58,10 +58,22 @@ func (s *server) handlePgInsert(w http.ResponseWriter, r *http.Request) {
 		s.respond(w, r, 500, nil, err)
 		return
 	}
-	s.respond(w, r, 200, id, nil)
+	s.respond(w, r, 200, map[string]int{
+		"id": id,
+	}, nil)
 }
 func (s *server) handleSignHmac(w http.ResponseWriter, r *http.Request) {
-
+	model := &models.Hmac512Request{}
+	if err := json.NewDecoder(r.Body).Decode(model); err != nil {
+		s.respond(w, r, 400, nil, err)
+		return
+	}
+	hx, err := s.service.SignHmac512(model)
+	if err != nil {
+		s.respond(w, r, 500, nil, err)
+		return
+	}
+	s.respond(w, r, 200, hx, nil)
 }
 func (s *server) handleRedisIncr(w http.ResponseWriter, r *http.Request) {
 	model := &models.RedisIncrRequest{}
@@ -74,5 +86,7 @@ func (s *server) handleRedisIncr(w http.ResponseWriter, r *http.Request) {
 		s.respond(w, r, 500, nil, err)
 		return
 	}
-	s.respond(w, r, 200, i, nil)
+	s.respond(w, r, 200, map[string]int64{
+		"value": i,
+	}, nil)
 }

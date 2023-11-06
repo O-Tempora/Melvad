@@ -1,4 +1,4 @@
-package main
+package apiserver
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/O-Tempora/Melvad/config"
 	"github.com/O-Tempora/Melvad/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -29,7 +30,7 @@ func WithLogger(s *server) *server {
 	}))
 	return s
 }
-func WithDbConn(s *server, cf *Config) *server {
+func WithDbConn(s *server, cf *config.Config) *server {
 	conn, err := pgx.Connect(
 		context.Background(),
 		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", cf.Database.User, cf.Database.Password, cf.Database.Host, cf.Database.Port, cf.Database.Name),
@@ -42,7 +43,7 @@ func WithDbConn(s *server, cf *Config) *server {
 	s.pgcon = conn
 	return s
 }
-func WithRedisConn(s *server, cf *Config) *server {
+func WithRedisConn(s *server, cf *config.Config) *server {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cf.Redis.Host, cf.Redis.Port),
 		Password: cf.Redis.Password,
@@ -55,7 +56,7 @@ func WithRedisConn(s *server, cf *Config) *server {
 	return s
 }
 
-func StartServer(config *Config) error {
+func StartServer(config *config.Config) error {
 	s := &server{}
 	s = WithDbConn(WithRedisConn(WithLogger(s), config), config)
 	s.service = &service.Service{

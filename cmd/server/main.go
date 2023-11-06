@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	apiserver "github.com/O-Tempora/Melvad/cmd/api_server"
+	"github.com/O-Tempora/Melvad/config"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,7 +24,7 @@ func init() {
 	flag.IntVar(&redis_port, "port", 5554, "Redis port")
 }
 func main() {
-	cf := &Config{}
+	cf := &config.Config{}
 	file, err := os.OpenFile(defaulConfig, os.O_CREATE|os.O_RDONLY, 0666)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -37,7 +39,7 @@ func main() {
 	cf.Redis.Host = redis_host
 	cf.Redis.Port = redis_port
 
-	if err = StartServer(cf); err != nil {
+	if err = apiserver.StartServer(cf); err != nil {
 		log.Fatal(err.Error())
 	}
 }

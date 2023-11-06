@@ -1,0 +1,13 @@
+host: "localhost"
+port: 6555
+redis_config:
+  host: "localhost"
+  port: 6554
+  db: 0
+  password: ""
+db_config:
+  host: "localhost"
+  port: 6553
+  name: "melvad"
+  username: "postgres"
+  password: "postgres"

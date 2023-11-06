@@ -16,6 +16,12 @@ type Service struct {
 	Rediscon *redis.Client
 }
 
+type IService interface {
+	InsertUser(user *models.PgRequest) (int, error)
+	RedisIncrease(m *models.RedisIncrRequest) (int64, error)
+	SignHmac512(m *models.Hmac512Request) (string, error)
+}
+
 func (s *Service) InsertUser(user *models.PgRequest) (int, error) {
 	var id int
 	_, err := s.Pgconn.Exec(context.Background(),

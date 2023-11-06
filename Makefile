@@ -34,11 +34,13 @@ down:
 	sudo docker stop melvad-redis && sudo docker stop melvad-postgres
 	sudo docker rm melvad-redis && sudo docker rm melvad-postgres
 
+## test: runs tests
 test:
 	sudo docker run --name melvad-postgres-test --pull=always -p 6553:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=melvad -d postgres
 	timeout 15s bash -c 'until sudo docker exec melvad-postgres-test pg_isready ; do sleep 1 ; done'
 	sudo docker run --name melvad-redis-test --pull=always -p 6554:6379 -d redis
 	go test -v ./...
+	$(MAKE) down-test
 
 down-test: 
 	sudo docker stop melvad-redis-test && sudo docker stop melvad-postgres-test
